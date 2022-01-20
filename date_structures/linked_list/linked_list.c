@@ -65,10 +65,37 @@ bool list_add_elem_at_back(linked_list_t *list, char *data) {
         return true;
     }
 
-    linked_list_t last = *list;
-    while(last->next != NULL) last = (linked_list_t)last->next;
+    linked_list_t last = (*list);
+    while(last->next) last = (linked_list_t)last->next;
 
     last->next = tmp;
+    return true;
+}
+
+bool list_add_elem_at_position(linked_list_t *list, char *data, uint32_t pos) {
+
+    if (!data) return false;
+
+    if (pos == 0) return list_add_elem_at_front(list, data);
+    if (pos > list_get_size(*list)) return false;
+
+    linked_list_t node = malloc(sizeof(linked_list_t));
+    if (!node) return false;
+
+    node->data = data;
+    node->next = NULL;
+
+    if (!list) {
+
+        (*list) = node;
+        return true;
+    }
+
+    linked_list_t tmp = (*list);
+    for (uint32_t i = 0; i != pos -1; i++) tmp = (linked_list_t)tmp->next;
+    node->next = tmp->next;
+    tmp->next = node;
+
     return true;
 }
 
@@ -84,6 +111,7 @@ int main(int ac,char *const *av) {
     list_add_elem_at_front(node, "Hello");
     list_add_elem_at_back(node, "World");
     list_add_elem_at_back(node, "!");
+    list_add_elem_at_position(node, "Bonjour", 1);
 
     printf("[Output]: size = %d\n", list_get_size(*node)) ;
     list_dump(*node);
